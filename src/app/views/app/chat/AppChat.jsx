@@ -1,5 +1,10 @@
 import React, { Component } from "react";
 import { Card } from "react-bootstrap";
+import { Button } from "react-bootstrap";
+import {
+  NotificationContainer,
+  NotificationManager
+} from "react-notifications";
 import {
   getAllContact,
   getRecentContact,
@@ -18,6 +23,7 @@ let showConnectedMessage = false;
 
 const WS_USER_INFO = 2;
 const ROLE_CONSULTANT = "consultant";
+const URL_SERVER_CHAT = 'ws://localhost:6969';
 class AppChat extends Component {
 
   constructor(props) {
@@ -136,7 +142,7 @@ class AppChat extends Component {
   connectToChat = () => {
     this.disconnectToChat();
 
-    ws = new WebSocket('ws://localhost:6969');
+    ws = new WebSocket(URL_SERVER_CHAT);
     ws.onopen = (evt) => { this.onChatOpen(evt); };
     ws.onclose = (evt) => { this.onChatClose(evt); };
     ws.onmessage = (evt) => { this.onChatMessage(evt); };
@@ -154,6 +160,7 @@ class AppChat extends Component {
     console.log('Connection opened!');
     if (ws && ws.readyState == 1) {
         console.log("ws: ", ws);
+        NotificationManager.success("Bienvenido al chat", "Bienvenido", 2000);
     }
   }
 
@@ -161,16 +168,18 @@ class AppChat extends Component {
     // Clean
     console.log('Connection closed!');
     ws = null;
-
-    if (this.state.loggedUser.role === ROLE_CONSULTANT) {
-      history.push({
-        pathname: "/consultant/home"
-      });
-    } else {
-      history.push({
-        pathname: "/client/home",
-      });
-    }
+    NotificationManager.error("Has sido desconectado del chat", "Error", 2000);
+    setTimeout(() => {
+      if (this.state.loggedUser.role === ROLE_CONSULTANT) {
+        history.push({
+          pathname: "/consultant/home"
+        });
+      } else {
+        history.push({
+          pathname: "/client/home",
+        });
+      }
+    }, 2000);
 
   }
 
@@ -355,6 +364,7 @@ class AppChat extends Component {
           setBottomRef={this.setBottomRef}
           handleMessageSend={this.handleMessageSend}
         ></ChatContainer>
+        <NotificationContainer />
       </Card>
     );
   }
