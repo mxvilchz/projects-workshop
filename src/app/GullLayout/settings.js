@@ -9,10 +9,10 @@ export const GullLayoutSettings = {
   layout2Settings,
   layout3Settings,
   customizer: {
-    show: true,
-    open: true
+    show: false,
+    open: false
   },
   footer: {
-    show: true
+    show: false
   }
 };
