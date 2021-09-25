@@ -42,7 +42,6 @@ class Profile extends Component {
     users
       .then(data => {
         const userSearch = data.filter(item => item.uid === user.userId)
-        console.log(userSearch[0])
         this.setState({
           ...userSearch[0],
         })
