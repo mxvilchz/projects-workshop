@@ -7,16 +7,15 @@ class PricingTable extends Component {
       <div>
         <Breadcrumb
           routeSegments={[
-            { name: "Home", path: "/" },
-            { name: "Pages", path: "/pages" },
-            { name: "Pricing Table" }
+            { name: "Inicio", path: "/client/home" },
+            { name: "Planes" }
           ]}
         ></Breadcrumb>
 
         <section className="ul-pricing-table">
           <div className="row ">
             <div className="col-lg-12 col-xl-12">
-              <SimpleCard title="Default Style" className="mb-4">
+              <SimpleCard title="" className="mb-4">
                 <div className="ul-pricing__table-list">
                   <div className="row">
                     <div className="col-md-12 col-lg-4 col-xl-4">
@@ -25,12 +24,12 @@ class PricingTable extends Component {
                           <i className="i-Bicycle"></i>
                         </div>
                         <div className="ul-pricing__title">
-                          <h2 className="heading text-primary">Basic</h2>
+                          <h2 className="heading text-primary">Plan Basico</h2>
                         </div>
-                        <div className="ul-pricing__text text-mute">5gb</div>
+                        {/* <div className="ul-pricing__text text-mute">5gb</div> */}
                         <div className="ul-pricing__main-number">
-                          <h3 className="heading display-3 text-primary t-font-boldest">
-                            $10
+                          <h3 className="heading display-4 text-primary t-font-boldest">
+                            S/ 5.00
                           </h3>
                         </div>
                         <div className="ul-pricing__list">
@@ -44,7 +43,7 @@ class PricingTable extends Component {
                           type="button"
                           className="btn btn-lg btn-default btn-rounded btn-primary m-1"
                         >
-                          Purchase
+                          Adquirir
                         </button>
                       </div>
                     </div>
@@ -54,12 +53,12 @@ class PricingTable extends Component {
                           <i className="i-Motorcycle"></i>
                         </div>
                         <div className="ul-pricing__title">
-                          <h2 className="heading text-primary">Standard</h2>
+                          <h2 className="heading text-primary">Plan Standard</h2>
                         </div>
-                        <div className="ul-pricing__text text-mute">15gb</div>
+                        {/* <div className="ul-pricing__text text-mute">15gb</div> */}
                         <div className="ul-pricing__main-number">
-                          <h3 className="heading display-3 text-primary t-font-boldest">
-                            $250
+                          <h3 className="heading display-4 text-primary t-font-boldest">
+                            S/ 8.00
                           </h3>
                         </div>
                         <div className="ul-pricing__list">
@@ -73,7 +72,7 @@ class PricingTable extends Component {
                           type="button"
                           className="btn btn-lg btn-default btn-rounded btn-primary m-1"
                         >
-                          Purchase
+                          Adquirir
                         </button>
                       </div>
                     </div>
@@ -83,12 +82,12 @@ class PricingTable extends Component {
                           <i className="i-Car-2"></i>
                         </div>
                         <div className="ul-pricing__title">
-                          <h2 className="heading text-primary">Premium</h2>
+                          <h2 className="heading text-primary">Plan Premium</h2>
                         </div>
-                        <div className="ul-pricing__text text-mute">35gb</div>
+                        {/* <div className="ul-pricing__text text-mute">35gb</div> */}
                         <div className="ul-pricing__main-number">
-                          <h3 className="heading display-3 text-primary t-font-boldest">
-                            $500
+                          <h3 className="heading display-4 text-primary t-font-boldest">
+                            S/ 10.00
                           </h3>
                         </div>
                         <div className="ul-pricing__list">
@@ -102,7 +101,7 @@ class PricingTable extends Component {
                           type="button"
                           className="btn btn-lg btn-default btn-rounded btn-primary m-1"
                         >
-                          Purchase
+                          Adquirir
                         </button>
                       </div>
                     </div>
@@ -110,7 +109,7 @@ class PricingTable extends Component {
                 </div>
               </SimpleCard>
 
-              <SimpleCard title="Full width" className="mb-4">
+              {/* <SimpleCard title="Full width" className="mb-4">
                 <div className="row">
                   <div className="col-lg-3 col-xl-3">
                     <div className="ul-pricing__table-1 mb-4">
@@ -391,7 +390,7 @@ class PricingTable extends Component {
                     </div>
                   </div>
                 </div>
-              </SimpleCard>
+              </SimpleCard> */}
             </div>
           </div>
         </section>

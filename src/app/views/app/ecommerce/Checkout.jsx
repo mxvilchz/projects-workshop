@@ -20,9 +20,8 @@ class Checkout extends Component {
       <div>
         <Breadcrumb
           routeSegments={[
-            { name: "Home", path: "/" },
-            { name: "Ecommerce", path: "/ecommerce" },
-            { name: "Checkout" }
+            { name: "Inicio", path: "/client/home" },
+            { name: "Facturación" }
           ]}
         ></Breadcrumb>
 

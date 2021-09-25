@@ -1,8 +1,8 @@
 import React, { Component, Suspense } from "react";
-import AppContext from "app/appContext";
+// import AppContext from "app/appContext";
 import { renderRoutes } from "react-router-config";
 
-import Layout1Sidenav from "./Layout1Sidenav";
+// import Layout1Sidenav from "./Layout1Sidenav";
 import Footer from "../SharedComponents/Footer";
 import Layout1Header from "./Layout1Header";
 
@@ -37,13 +37,13 @@ class Layout1 extends Component {
       <div>
         <div className={`app-admin-wrap layout-sidebar-large`}>
           <Layout1Header></Layout1Header>
-          <Layout1Sidenav />
+          {/* <Layout1Sidenav /> */}
           {/* sidebar */}
 
           <div
             className={classList({
               "main-content-wrap d-flex flex-column": true,
-              "sidenav-open": settings.layout1Settings.leftSidebar.open
+              "sidenav-open": false
             })}
           >
             <Suspense fallback={<Loading />}>

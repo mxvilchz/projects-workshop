@@ -64,14 +64,30 @@ class FirebaseAuthService {
     return this.auth.signInWithPhoneNumber(phoneNumber);
   };
 
-  getUserData = docId => {
-    //   generally it's better to use uid for docId
+  // getUserData = docId => {
+  //   //   generally it's better to use uid for docId
+  //   this.firestore
+  //     .collection("users")
+  //     .doc(docId)
+  //     .get()
+  //     .then(doc => {
+  //       console.log(doc.data());
+  //     });
+  // };
+
+  getUserData = (userId, callback) => {
     this.firestore
       .collection("users")
-      .doc(docId)
       .get()
-      .then(doc => {
-        console.log(doc.data());
+      .then(docList => {
+        let user = null
+        docList.forEach(doc => {
+          const data = doc.data()
+          if (data.uid === userId) {
+            user = data
+          }
+        });
+        callback(user)
       });
   };
 

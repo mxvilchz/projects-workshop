@@ -10,9 +10,31 @@ const BlankPage = lazy(() => import("./BlankPage"));
 
 const FAQ = lazy(() => import("./FAQ"));
 
+const ClientHome = lazy(() => import("./ClientHome"));
+
+const ConsultantHome = lazy(() => import("./ConsultantHome"));
+
+const Specialties = lazy(() => import("./Specialties"));
+
 const pagesRoutes = [
   {
-    path: "/pages/pricing-table",
+    path: "/client/home",
+    component: ClientHome
+  },
+  {
+    path: "/consultant/home",
+    component: ConsultantHome
+  },
+  {
+    path: "/specialties",
+    component: Specialties
+  },
+  // {
+  //   path: "/pages/pricing-table",
+  //   component: PricingTable
+  // },
+  {
+    path: "/princing",
     component: PricingTable
   },
   {

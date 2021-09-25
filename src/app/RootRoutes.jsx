@@ -19,13 +19,13 @@ import taskManagerRoutes from "./views/app/task-manager/taskManagerRoutes";
 import ecommerceRoutes from "./views/app/ecommerce/ecommerceRoutes";
 import contactRoutes from "./views/app/contact/contactRoutes";
 
-const redirectRoute = [
-  {
-    path: "/",
-    exact: true,
-    component: () => <Redirect to="/dashboard/v1" />
-  }
-];
+// const redirectRoute = [
+//   {
+//     path: "/",
+//     // exact: true,
+//     component: () => <Redirect to="/dashboard/v1" />
+//   }
+// ];
 
 const errorRoute = [
   {
@@ -55,7 +55,7 @@ const routes = [
       ...calendarRoutes,
       ...ecommerceRoutes,
       ...contactRoutes,
-      ...redirectRoute,
+      // ...redirectRoute,
       ...errorRoute
     ]
   }

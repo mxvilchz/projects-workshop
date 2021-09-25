@@ -50,26 +50,34 @@ export function firebaseLoginEmailPassword({ email, password }) {
     FirebaseAuthService.signInWithEmailAndPassword(email, password)
       .then(user => {
         if (user) {
-          dispatch(
-            setUserData({
-              userId: "1",
-              role: "ADMIN",
-              displayName: "Watson Joyce",
-              email: "watsonjoyce@gmail.com",
-              photoURL: "/assets/images/face-7.jpg",
-              age: 25,
-              token: "faslkhfh423oiu4h4kj432rkj23h432u49ufjaklj423h4jkhkjh",
-              ...user
-            })
-          );
+          const id = user.user.uid
+          FirebaseAuthService.getUserData(id, data => {
+            dispatch(
+              setUserData({
+                userId: user.user.uid,
+                role: data.role,
+                displayName: user.user.displayName,
+                email: user.user.email,
+                photoURL: user.user.photoURL,
+                phoneNumber: user.user.phoneNumber,
+                token: user.user.refreshToken,
+              })
+            );
 
-          history.push({
-            pathname: "/"
-          });
+            if (data.role === 'client') {
+              history.push({
+                pathname: "/client/home",
+              });
+            } else {
+              history.push({
+                pathname: "/consultant/home"
+              });
+            }
 
-          return dispatch({
-            type: LOGIN_SUCCESS
-          });
+            return dispatch({
+              type: LOGIN_SUCCESS
+            });
+          })
         } else {
           return dispatch({
             type: LOGIN_ERROR,

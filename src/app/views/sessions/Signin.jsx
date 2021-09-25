@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { Formik } from "formik";
 import * as yup from "yup";
-import { loginWithEmailAndPassword } from "app/redux/actions/LoginActions";
+// import { loginWithEmailAndPassword } from "app/redux/actions/LoginActions";
+import { firebaseLoginEmailPassword } from "app/redux/actions/LoginActions";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
@@ -10,18 +11,18 @@ import { Button } from "react-bootstrap";
 const SigninSchema = yup.object().shape({
   email: yup
     .string()
-    .email("Invalid email")
-    .required("email is required"),
+    .email("Email es invalido")
+    .required("Email es requerido"),
   password: yup
     .string()
-    .min(8, "Password must be 8 character long")
-    .required("password is required")
+    .min(8, "La contraseña debe tener 8 caracteres")
+    .required("Contraseña es requerido")
 });
 
 class Signin extends Component {
   state = {
-    email: "watson@example.com",
-    password: "12345678"
+    email: "",
+    password: ""
   };
 
   handleChange = event => {
@@ -30,7 +31,7 @@ class Signin extends Component {
   };
 
   handleSubmit = (value, { isSubmitting }) => {
-    this.props.loginWithEmailAndPassword(value);
+    this.props.firebaseLoginEmailPassword(value);
   };
 
   render() {
@@ -49,7 +50,7 @@ class Signin extends Component {
                   <div className="auth-logo text-center mb-4">
                     <img src="/assets/images/logo.png" alt="" />
                   </div>
-                  <h1 className="mb-3 text-18">Sign In</h1>
+                  <h1 className="mb-3 text-18">Inicio de sesión</h1>
                   <Formik
                     initialValues={this.state}
                     validationSchema={SigninSchema}
@@ -66,7 +67,7 @@ class Signin extends Component {
                     }) => (
                       <form onSubmit={handleSubmit}>
                         <div className="form-group">
-                          <label htmlFor="email">Email address</label>
+                          <label htmlFor="email">Email</label>
                           <input
                             className="form-control form-control-rounded position-relative"
                             type="email"
@@ -82,7 +83,7 @@ class Signin extends Component {
                           )}
                         </div>
                         <div className="form-group">
-                          <label htmlFor="password">Password</label>
+                          <label htmlFor="password">Contraseña</label>
                           <input
                             className="form-control form-control-rounded"
                             type="password"
@@ -101,7 +102,7 @@ class Signin extends Component {
                           className="btn btn-rounded btn-primary btn-block mt-2"
                           type="submit"
                         >
-                          Sign In
+                          Iniciar Sesión
                         </button>
                       </form>
                     )}
@@ -109,7 +110,7 @@ class Signin extends Component {
 
                   <div className="mt-3 text-center">
                     <Link to="/session/forgot-password" className="text-muted">
-                      <u>Forgot Password?</u>
+                      <u>¿Olvidaste tu contraseña?</u>
                     </Link>
                   </div>
                 </div>
@@ -123,17 +124,17 @@ class Signin extends Component {
               >
                 <div className="pr-3 auth-right">
                   <Link
-                    to="/session/signup"
+                    to="/signup/type"
                     className="btn btn-rounded btn-outline-primary btn-outline-email btn-block btn-icon-text"
                   >
-                    <i className="i-Mail-with-At-Sign"></i> Sign up with Email
+                    <i className="i-Mail-with-At-Sign"></i> Crear nueva cuenta
                   </Link>
 
                   <Button className="btn btn-rounded btn-outline-google btn-block btn-icon-text">
-                    <i className="i-Google-Plus"></i> Sign up with Google
+                    <i className="i-Google-Plus"></i> Iniciar sesión con Google
                   </Button>
                   <Button className="btn btn-rounded btn-block btn-icon-text btn-outline-facebook">
-                    <i className="i-Facebook-2"></i> Sign up with Facebook
+                    <i className="i-Facebook-2"></i> Iniciar sesión con Facebook
                   </Button>
                 </div>
               </div>
@@ -146,10 +147,10 @@ class Signin extends Component {
 }
 
 const mapStateToProps = state => ({
-  loginWithEmailAndPassword: PropTypes.func.isRequired,
+  firebaseLoginEmailPassword: PropTypes.func.isRequired,
   user: state.user
 });
 
 export default connect(mapStateToProps, {
-  loginWithEmailAndPassword
+  firebaseLoginEmailPassword
 })(Signin);

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Dropdown } from "react-bootstrap";
 import DropdownMenu from "react-bootstrap/DropdownMenu";
-import { getTimeDifference } from "@utils";
+// import { getTimeDifference } from "@utils";
 import DropdownToggle from "react-bootstrap/DropdownToggle";
 import { Link } from "react-router-dom";
 
@@ -15,8 +15,7 @@ import { logoutUser } from "app/redux/actions/UserActions";
 import { withRouter } from "react-router-dom";
 
 import { merge } from "lodash";
-import MegaMenu from "@gull/components/MegaMenu";
-
+// import MegaMenu from "@gull/components/MegaMenu";
 class Layout1Header extends Component {
   state = {
     shorcutMenuList: [
@@ -112,35 +111,34 @@ class Layout1Header extends Component {
   };
 
   handleSearchBoxOpen = () => {
-    let { setLayoutSettings, settings } = this.props;
-    setLayoutSettings(
-      merge({}, settings, {
-        layout1Settings: {
-          searchBox: {
-            open: true
-          }
-        }
-      })
-    );
+    // let { setLayoutSettings, settings } = this.props;
+    // setLayoutSettings(
+    //   merge({}, settings, {
+    //     layout1Settings: {
+    //       searchBox: {
+    //         open: true
+    //       }
+    //     }
+    //   })
+    // );
   };
 
   render() {
-    let { shorcutMenuList = [], notificationList = [] } = this.state;
-
+    // let { shorcutMenuList = [], notificationList = [] } = this.state;
     return (
       <div className="main-header">
         <div className="logo">
           <img src="/assets/images/logo.png" alt="" />
         </div>
 
-        <div className="menu-toggle" onClick={this.handleMenuClick}>
+        {/* <div className="menu-toggle" onClick={this.handleMenuClick}>
           <div></div>
           <div></div>
           <div></div>
-        </div>
+        </div> */}
 
         <div className="d-none d-lg-flex align-items-center">
-          <Dropdown className="mr-3">
+          {/* <Dropdown className="mr-3">
             <Dropdown.Toggle as="span" className="toggle-hidden cursor-pointer">
               Mega Menu
             </Dropdown.Toggle>
@@ -150,7 +148,7 @@ class Layout1Header extends Component {
                 <MegaMenu></MegaMenu>
               </Dropdown.Menu>
             </div>
-          </Dropdown>
+          </Dropdown> */}
 
           <div className="search-bar">
             <input
@@ -171,7 +169,7 @@ class Layout1Header extends Component {
             onClick={this.toggleFullScreen}
           ></i>
 
-          <Dropdown>
+          {/* <Dropdown>
             <Dropdown.Toggle as="span" className="toggle-hidden">
               <i
                 className="i-Safe-Box text-muted header-icon"
@@ -187,9 +185,9 @@ class Layout1Header extends Component {
                 ))}
               </div>
             </Dropdown.Menu>
-          </Dropdown>
+          </Dropdown> */}
 
-          <Dropdown>
+          {/* <Dropdown>
             <Dropdown.Toggle as="span" className="toggle-hidden cursor-pointer">
               <div
                 className="badge-top-container"
@@ -228,7 +226,7 @@ class Layout1Header extends Component {
                 </div>
               ))}
             </DropdownMenu>
-          </Dropdown>
+          </Dropdown> */}
 
           <div className="user col align-self-end">
             <Dropdown>
@@ -250,17 +248,22 @@ class Layout1Header extends Component {
                   <i className="i-Lock-User mr-1"></i> Timothy Carlson
                 </div>
                 <Link to="/" className="dropdown-item cursor-pointer">
-                  Account settings
+                  {/* Account settings */}
+                  Configuraciones
                 </Link>
                 <Link to="/" className="dropdown-item cursor-pointer">
-                  Billing history
+                  {/* Billing history */}
+                  Facturación
+                </Link>
+                <Link to="/" className="dropdown-item cursor-pointer">
+                  Suscripción
                 </Link>
                 <Link
                   to="/"
                   className="dropdown-item cursor-pointer"
                   onClick={this.props.logoutUser}
                 >
-                  Sign out
+                  Cerrar Sesión
                 </Link>
               </DropdownMenu>
             </Dropdown>

@@ -149,7 +149,7 @@ class Layout1Sidenav extends Component {
             "sidebar-left o-hidden rtl-ps-none": true,
             open: settings.layout1Settings.leftSidebar.open
           })}
-          // id="mainsidenav"
+        // id="mainsidenav"
         >
           <ul className="navigation-left">
             {navigations.map((item, i) => (

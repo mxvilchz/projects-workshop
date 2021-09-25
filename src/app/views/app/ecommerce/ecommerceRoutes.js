@@ -21,8 +21,12 @@ const ecommerceRoutes = [
     path: "/ecommerce/cart",
     component: Cart
   },
+  // {
+  //   path: "/ecommerce/checkout",
+  //   component: Checkout
+  // },
   {
-    path: "/ecommerce/checkout",
+    path: "/checkout",
     component: Checkout
   }
 ];
