@@ -39,6 +39,7 @@ class Auth extends Component {
             photoURL: user.photoURL,
             phoneNumber: user.phoneNumber,
             token: user.refreshToken,
+            category: data.role === 'client' ? '' : data.category
           }
           this.props.loginWithEmailAndPassword(payload)
         })

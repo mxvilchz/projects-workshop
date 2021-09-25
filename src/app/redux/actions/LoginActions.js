@@ -67,6 +67,7 @@ export function firebaseLoginEmailPassword({ email, password }) {
                 photoURL: user.user.photoURL,
                 phoneNumber: user.user.phoneNumber,
                 token: user.user.refreshToken,
+                category: data.role === 'client' ? '' : data.category
               })
             );
 

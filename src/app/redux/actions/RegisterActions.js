@@ -12,7 +12,7 @@ export function firebaseSignUpClient(payload) {
     FirebaseAuthService.signUpWithEmailAndPassword(email, password)
       .then(user => {
         const uid = user.user.uid
-        return FirebaseAuthService.registerUser({ uid, username, role: 'client' })
+        return FirebaseAuthService.registerUser({ uid, firstName: username, role: 'client', email })
       })
       .then(() => {
 
@@ -40,7 +40,7 @@ export function firebaseSignUpConsultant(payload) {
     FirebaseAuthService.signUpWithEmailAndPassword(email, password)
       .then(user => {
         const uid = user.user.uid
-        return FirebaseAuthService.registerUser({ uid, username, category, role: 'consultant' })
+        return FirebaseAuthService.registerUser({ uid, firstName: username, category, role: 'consultant', email })
       })
       .then(() => {
 

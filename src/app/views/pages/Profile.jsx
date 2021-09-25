@@ -6,9 +6,12 @@ import { Formik } from "formik";
 import * as yup from "yup";
 // import { DateRange, Calendar } from "react-date-range";
 import { connect } from "react-redux";
+import FirebaseAuthService from "../../services/firebase/firebaseAuthService";
+import moment from "moment";
 
 class Profile extends Component {
   state = {
+    id: "",
     firstName: "",
     lastName: "",
     phone: "",
@@ -35,16 +38,39 @@ class Profile extends Component {
 
   componentDidMount = () => {
     const user = this.props.user
-    console.log(user)
-    // this.setState({
-    //   ...this.state,
-    //   email: user.email,
-    //   firstName: user.displayName
-    // })
+    const users = this.getUsers()
+    users
+      .then(data => {
+        const userSearch = data.filter(item => item.uid === user.userId)
+        console.log(userSearch[0])
+        this.setState({
+          ...userSearch[0],
+        })
+      })
+      .catch(error => console.log(error))
+
   }
 
-  handleSubmit = (values, { setSubmitting }) => {
-    console.log(values);
+  getUsers = async () => {
+    const snapshot = await FirebaseAuthService.firestore.collection('users').get()
+    return snapshot.docs.map(doc => {
+      return {
+        ...doc.data(),
+        id: doc.id,
+      }
+    });
+  }
+
+  handleSubmit = async (values, { setSubmitting }) => {
+    FirebaseAuthService.firestore.collection('users').doc(values.id).update({
+      email: values.email,
+      firstName: values.firstName,
+      lastName: values.lastName,
+      phone: values.phone,
+      birthDay: values.birthDay,
+      website: values.website
+    })
+    alert('Datos guardados!')
   };
 
   // handleDateRangeChange = range => {
@@ -71,11 +97,13 @@ class Profile extends Component {
           <div className="col-md-12">
             <div className="card mb-4">
               <div className="card-body">
-                <div className="card-title mb-3">Perfil de usuario</div>
+                <div className="card-title mb-0">Perfil de usuario</div>
+                <h1 className="mb-5">{user.role === 'client' ? 'Cliente' : 'Consultor'}</h1>
                 <Formik
                   initialValues={this.state}
                   validationSchema={basicFormSchema}
                   onSubmit={this.handleSubmit}
+                  enableReinitialize={true}
                 >
                   {({
                     values,
@@ -198,6 +226,7 @@ class Profile extends Component {
                             placeholder="xox.com"
                             onChange={handleChange}
                             onBlur={handleBlur}
+                            value={values.website}
                           />
                         </div>
 
@@ -205,11 +234,14 @@ class Profile extends Component {
                           <label htmlFor="picker2">Fecha de nacimiento</label>
                           <DateTime
                             name="birthDay"
-                            onChange={date => {
+                            dateFormat="DD/MM/YYYY"
+                            timeFormat={false}
+                            value={values.birthDay}
+                            onChange={(date) => {
                               handleChange({
                                 target: {
                                   name: "birthDay",
-                                  value: date.toDate()
+                                  value: moment(date).format('DD/MM/YYYY')
                                 }
                               });
                             }}
