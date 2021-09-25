@@ -8,10 +8,34 @@ const ForgotPassword = lazy(() => import("./ForgotPassword"));
 
 const Error404 = lazy(() => import("./Error"));
 
+const LandingPage = lazy(() => import("./../pages/LandingPage"));
+
+const Signuptype = lazy(() => import("./Signuptype"));
+
 const sessionsRoutes = [
   {
-    path: "/session/signup",
-    component: Signup
+    path: "/",
+    component: LandingPage,
+    exact: true,
+  },
+  // {
+  //   path: "/session/signup",
+  //   component: Signup
+  // },
+  {
+    path: "/session/signup-client",
+    component: Signup,
+    exact: true,
+  },
+  {
+    path: "/session/signup-consultant",
+    component: Signup,
+    exact: true,
+  },
+  {
+    path: "/signup/type",
+    component: Signuptype,
+    exact: true
   },
   {
     path: "/session/signin",
