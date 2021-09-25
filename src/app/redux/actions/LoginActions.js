@@ -19,15 +19,15 @@ export function loginWithEmailAndPassword(payload) {
       .then(user => {
         dispatch(setUserData(user));
 
-        if (user.role === 'client') {
-          history.push({
-            pathname: "/client/home",
-          });
-        } else {
-          history.push({
-            pathname: "/consultant/home"
-          });
-        }
+        // if (user.role === 'client') {
+        //   history.push({
+        //     pathname: "/client/home",
+        //   });
+        // } else {
+        //   history.push({
+        //     pathname: "/consultant/home"
+        //   });
+        // }
 
         return dispatch({
           type: LOGIN_SUCCESS
