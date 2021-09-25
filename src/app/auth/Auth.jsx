@@ -13,8 +13,8 @@ class Auth extends Component {
     super(props);
 
     this.props.setUserData(localStorageService.getItem("auth_user"));
-    this.checkJwtAuth();
-    // this.checkFirebaseAuth();
+    // this.checkJwtAuth();
+    this.checkFirebaseAuth();
   }
 
   checkJwtAuth = () => {

@@ -1,4 +1,4 @@
-import firebase from "firebase/app";
+import firebase from "firebase";
 import "firebase/auth";
 import "firebase/firebase-firestore";
 import firebaseConfig from "./firebaseConfig";
@@ -6,8 +6,8 @@ import firebaseConfig from "./firebaseConfig";
 class FirebaseAuthService {
   auth;
   firestore;
-  //   database;
-  //   storage;
+  database;
+  storage;
 
   googleProvider;
   facebookProvider;
@@ -16,16 +16,16 @@ class FirebaseAuthService {
   constructor() {
     // UNCOMMENT IF YOU WANT TO USE FIREBASE
 
-    // this.init();
-    // this.auth = firebase.auth();
-    // this.firestore = firebase.firestore();
+    this.init();
+    this.auth = firebase.auth();
+    this.firestore = firebase.firestore();
 
-    //   this.database  = firebase.database();
-    //   this.storage = firebase.storage();
-    
-    // this.googleProvider = new firebase.auth.GoogleAuthProvider();
-    // this.facebookProvider = new firebase.auth.FacebookAuthProvider();
-    // this.twitterProvider = new firebase.auth.TwitterAuthProvider();
+    this.database = firebase.database();
+    this.storage = firebase.storage();
+
+    this.googleProvider = new firebase.auth.GoogleAuthProvider();
+    this.facebookProvider = new firebase.auth.FacebookAuthProvider();
+    this.twitterProvider = new firebase.auth.TwitterAuthProvider();
   }
 
   init = () => {
@@ -85,6 +85,16 @@ class FirebaseAuthService {
         });
       });
   };
+
+  registerUser = async (client) => {
+    return await this.firestore
+      .collection("users")
+      .add(client).then(data => {
+        return data;
+      }).catch(error => {
+        return error;
+      })
+  }
 
   signOut = () => {
     return this.auth.signOut();

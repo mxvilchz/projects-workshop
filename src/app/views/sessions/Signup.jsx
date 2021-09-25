@@ -4,6 +4,7 @@ import * as yup from "yup";
 import { connect } from "react-redux";
 import { Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { firebaseSignUpClient, firebaseSignUpConsultant } from "app/redux/actions/RegisterActions";
 
 class Signup extends Component {
   state = {
@@ -25,7 +26,12 @@ class Signup extends Component {
   }
 
   handleSubmit = (values, { setSubmitting }) => {
-    console.log(values);
+    if (this.state.isClient) {
+      this.props.firebaseSignUpClient(values);
+    } else {
+
+      this.props.firebaseSignUpConsultant(values);
+    }
   };
 
   handleChange(event, name) {
@@ -236,7 +242,10 @@ const SignupSchemaClient = yup.object().shape({
 });
 
 const mapStateToProps = state => ({
-  user: state.user
+  user: state.user,
 });
 
-export default connect(mapStateToProps, {})(Signup);
+export default connect(mapStateToProps, {
+  firebaseSignUpClient,
+  firebaseSignUpConsultant
+})(Signup);
