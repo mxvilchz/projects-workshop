@@ -10,8 +10,20 @@ import {
 import ChatSidenav from "./ChatSidenav";
 import ChatContainer from "./ChatContainer";
 import { isMobile } from "@utils";
+import localStorageService from "../../../services/localStorageService";
+import history from "@history.js";
 
+let ws = null;
+let showConnectedMessage = false;
+
+const WS_USER_INFO = 2;
+const ROLE_CONSULTANT = "consultant";
 class AppChat extends Component {
+
+  constructor(props) {
+    super(props);
+  }
+
   state = {
     currentUser: {
       id: "7863a6802ez0e277a0f98534"
@@ -29,6 +41,9 @@ class AppChat extends Component {
   windowResizeListener;
 
   componentDidMount() {
+    this.loadUserData();
+    this.connectToChat();
+
     let { id } = this.state.currentUser;
     getContactById(id).then(data => {
       this.setState({
@@ -108,6 +123,158 @@ class AppChat extends Component {
       }
     );
   };
+
+  loadUserData = () => {
+    const loggedUser = localStorageService.getItem("auth_user");
+    if (loggedUser) {
+      this.setState({
+        loggedUser
+      });
+    }
+  };
+
+  connectToChat = () => {
+    this.disconnectToChat();
+
+    ws = new WebSocket('ws://localhost:6969');
+    ws.onopen = (evt) => { this.onChatOpen(evt); };
+    ws.onclose = (evt) => { this.onChatClose(evt); };
+    ws.onmessage = (evt) => { this.onChatMessage(evt); };
+    ws.onerror = (evt) => { this.onChatError(evt); };
+  }
+
+  disconnectToChat = () => {
+      if (ws && ws.close && ws.readyState == 1) {
+          ws.close();
+          showConnectedMessage = true;
+      }    
+  }
+
+  onChatOpen = (evt) => {
+    console.log('Connection opened!');
+    if (ws && ws.readyState == 1) {
+        console.log("ws: ", ws);
+    }
+  }
+
+  onChatClose = (evt) => {
+    // Clean
+    console.log('Connection closed!');
+    ws = null;
+
+    if (this.state.loggedUser.role === ROLE_CONSULTANT) {
+      history.push({
+        pathname: "/consultant/home"
+      });
+    } else {
+      history.push({
+        pathname: "/client/home",
+      });
+    }
+
+  }
+
+  onChatMessage = (objMessage) => {
+      objMessage = JSON.parse(objMessage.data);
+      console.log(objMessage);
+      const messageType = objMessage.type;
+      const message = objMessage.message;
+
+      switch (messageType) {
+        case "id":
+            this.setSocketClientId(message);
+            break;
+
+        case "chatMessage":
+            this.showOtherMessage(objMessage);
+            break;
+
+        case "clients":
+            this.showClientsList(objMessage.message);
+            break;
+      }
+  }
+
+  onChatError = (evt) => {
+
+  }
+
+  setSocketClientId = (message) => {
+    console.log("1 function setClientId: ", message);
+    this.setState({
+      loggedUser: {
+        ...this.state.loggedUser,
+        socketId: message.socketId
+      }
+    });
+
+    this.sendUserInfo();
+  }
+
+  sendUserInfo = () => {
+    console.log("2 function sendUserInfo: ");
+    if (!ws) {
+        console.error("No WebSocket connection :(");
+        return;
+    }
+    ws.send(JSON.stringify({
+      idMessage: WS_USER_INFO,
+      message: this.state.loggedUser
+    }));
+  }
+
+  showOtherMessage = (objMessage) => {
+    console.log("function showOtherMessage");
+    console.log(objMessage);
+    const message = objMessage.message;
+    const name = objMessage.name;
+    const date = this.getDate();
+    
+    
+}
+
+  showClientsList = (objClients) => {
+    console.log("function showClientsList");
+    let clientsList = objClients.clients;
+    let advice = objClients.advice;
+    console.log(clientsList);
+
+    /*$("#divClientsList").empty();
+    if (clientsList != null && clientsList.length > 0) {
+        clientsList.forEach(client => {
+            let id = client.id;
+            let name = client.name;
+            
+            let isMe = id === userId;
+
+            if (!isMe) {
+                let username = name;
+                if (!name) {
+                    username = "New User";
+                }
+    
+                const clientItemContainer = `<div id="user-${id}" class="chat_list active_chat">
+                    <div class="chat_people">
+                            <div class="chat_img"> <img src="./img/user-profile.png" alt="sunil"> </div>
+                            <div class="chat_ib">
+                                <h5>${username} <span style="display:none;" class="chat_date">Dec 25</span></h5>
+                                <p style="display:none;">Test, which is a new approach to have all solutions
+                                    astrology under one roof.</p>
+                            </div>
+                        </div>
+                    </div>`;
+
+                $("#divClientsList").append(clientItemContainer);
+            }
+        });
+    }*/
+  }
+
+  getDate = () => {
+    const today = new Date();
+    return today.toLocaleString();
+  }
+
 
   handleMessageSend = message => {
     let { id } = this.state.currentUser;
