@@ -16,6 +16,8 @@ const ConsultantHome = lazy(() => import("./ConsultantHome"));
 
 const Specialties = lazy(() => import("./Specialties"));
 
+const Profile = lazy(() => import("./Profile"));
+
 const pagesRoutes = [
   {
     path: "/client/home",
@@ -28,6 +30,10 @@ const pagesRoutes = [
   {
     path: "/specialties",
     component: Specialties
+  },
+  {
+    path: "/profile",
+    component: Profile
   },
   // {
   //   path: "/pages/pricing-table",

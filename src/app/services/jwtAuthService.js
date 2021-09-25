@@ -2,7 +2,7 @@ import axios from "axios";
 import localStorageService from "./localStorageService";
 
 class JwtAuthService {
-  
+
   user = {
     userId: "1",
     role: 'ADMIN',
@@ -13,10 +13,22 @@ class JwtAuthService {
     token: "faslkhfh423oiu4h4kj432rkj23h432u49ufjaklj423h4jkhkjh"
   }
 
-  loginWithEmailAndPassword = (email, password) => {
+  // loginWithEmailAndPassword = (email, password) => {
+  //   return new Promise((resolve, reject) => {
+  //     setTimeout(() => {
+  //       resolve(this.user);
+  //     }, 1000);
+  //   }).then(data => {
+  //     this.setSession(data.token);
+  //     this.setUser(data);
+  //     return data;
+  //   });
+  // };
+
+  loginWithEmailAndPassword = (payload) => {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        resolve(this.user);
+        resolve(payload);
       }, 1000);
     }).then(data => {
       this.setSession(data.token);
@@ -37,7 +49,7 @@ class JwtAuthService {
     });
   };
 
-  
+
 
   logout = () => {
     this.setSession(null);
@@ -53,7 +65,7 @@ class JwtAuthService {
       delete axios.defaults.headers.common["Authorization"];
     }
   };
-  setUser = (user) => {    
+  setUser = (user) => {
     localStorageService.setItem("auth_user", user);
   }
   removeUser = () => {

@@ -245,17 +245,17 @@ class Layout1Header extends Component {
               </DropdownToggle>
               <DropdownMenu>
                 <div className="dropdown-header">
-                  <i className="i-Lock-User mr-1"></i> Timothy Carlson
+                  <i className="i-Lock-User mr-1"></i> {this.props.user.email}
                 </div>
-                <Link to="/" className="dropdown-item cursor-pointer">
+                <Link to="/profile" className="dropdown-item cursor-pointer">
                   {/* Account settings */}
-                  Configuraciones
+                  Configuraciones de cuenta
                 </Link>
-                <Link to="/" className="dropdown-item cursor-pointer">
+                <Link to="/checkout" className="dropdown-item cursor-pointer">
                   {/* Billing history */}
                   Facturación
                 </Link>
-                <Link to="/" className="dropdown-item cursor-pointer">
+                <Link to="/princing" className="dropdown-item cursor-pointer">
                   Suscripción
                 </Link>
                 <Link

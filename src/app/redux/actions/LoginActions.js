@@ -8,20 +8,26 @@ export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
 export const LOGIN_LOADING = "LOGIN_LOADING";
 export const RESET_PASSWORD = "RESET_PASSWORD";
 
-export function loginWithEmailAndPassword({ email, password }) {
+export function loginWithEmailAndPassword(payload) {
   return dispatch => {
     dispatch({
       type: LOGIN_LOADING
     });
 
     jwtAuthService
-      .loginWithEmailAndPassword(email, password)
+      .loginWithEmailAndPassword(payload)
       .then(user => {
         dispatch(setUserData(user));
 
-        history.push({
-          pathname: "/"
-        });
+        if (user.role === 'client') {
+          history.push({
+            pathname: "/client/home",
+          });
+        } else {
+          history.push({
+            pathname: "/consultant/home"
+          });
+        }
 
         return dispatch({
           type: LOGIN_SUCCESS
