@@ -40,7 +40,7 @@ class Auth extends Component {
             phoneNumber: user.phoneNumber,
             token: user.refreshToken,
           }
-          // this.props.loginWithEmailAndPassword(payload)
+          this.props.loginWithEmailAndPassword(payload)
         })
       } else {
         console.log("not logged in");
