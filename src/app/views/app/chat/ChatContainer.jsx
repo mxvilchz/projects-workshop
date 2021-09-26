@@ -12,13 +12,14 @@ const ChatContainer = ({
   messageList = [],
   setBottomRef,
   handleMessageSend,
+  handleMessageSend2,
   isMobile
 }) => {
   let [message, setMessage] = React.useState("");
   const sendMessageOnEnter = event => {
     if (event.key === "Enter" && !event.shiftKey) {
       message = message.trim();
-      if (message !== "") handleMessageSend(message);
+      if (message !== "") handleMessageSend2(message);
       setMessage("");
     }
   };
@@ -117,7 +118,7 @@ const ChatContainer = ({
                   className="btn btn-icon btn-rounded mr-2"
                   variant="primary"
                   onClick={() => {
-                    if (message.trim() !== "") handleMessageSend(message);
+                    if (message.trim() !== "") handleMessageSend2(message);
                     setMessage("");
                   }}
                 >

@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { Card } from "react-bootstrap";
-import { Button } from "react-bootstrap";
 import {
   NotificationContainer,
   NotificationManager
@@ -17,13 +16,29 @@ import ChatContainer from "./ChatContainer";
 import { isMobile } from "@utils";
 import localStorageService from "../../../services/localStorageService";
 import history from "@history.js";
+import { times } from "lodash";
 
 let ws = null;
 let showConnectedMessage = false;
 
+const WS_USER_MESSAGE = 1;
 const WS_USER_INFO = 2;
 const ROLE_CONSULTANT = "consultant";
 const URL_SERVER_CHAT = 'ws://localhost:6969';
+const AVATARS = [
+  "assets/images/faces/13.jpg",
+  "assets/images/faces/12.jpg",
+  "assets/images/faces/1.jpg",
+  "assets/images/faces/3.jpg",
+  "assets/images/faces/16.jpg",
+  "assets/images/faces/10.jpg",
+  "assets/images/faces/9.jpg",
+  "assets/images/faces/5.jpg",
+  "assets/images/faces/15.jpg",
+  "assets/images/faces/4.jpg",
+  "assets/images/faces/2.jpg"
+];
+
 class AppChat extends Component {
 
   constructor(props) {
@@ -84,6 +99,7 @@ class AppChat extends Component {
   }
 
   componentWillUnmount() {
+    this.disconnectToChat();
     if (window) window.removeEventListener("resize", this.windowResizeListener);
   }
 
@@ -130,6 +146,63 @@ class AppChat extends Component {
     );
   };
 
+  handleContactClick2 = contactId => {
+    if (isMobile()) this.toggleSidenav();
+
+    console.log("contactId: ", contactId);
+
+    const opponentUser = this.state.usersList.find(user => user.id === contactId);
+    
+    this.setState({
+      opponentUser: { 
+        avatar: opponentUser.avatar,
+        id: opponentUser.id,
+        name: opponentUser.email,
+        status: "online",
+        userId: opponentUser.userId,
+        role: opponentUser.role,
+        category: opponentUser.category
+      },
+      otherUser: { ...opponentUser}
+    });
+
+    const opponentUserId = opponentUser.userId;
+    const currentUserId = this.state.loggedUser.userId;
+    const chatId = currentUserId + "_" + opponentUserId;
+    console.log("chatId: ", chatId);
+
+    let chatRoom;
+    let chatRooms = this.state.chatRooms;
+    if (chatRooms) {
+      chatRoom = chatRooms.find(chatRoom => chatRoom.currentChatRoom === chatId);
+    } else {
+      chatRooms = [];
+    }
+
+    let messageList = [];
+    if (chatRoom) {
+      messageList = chatRoom.messageList;
+    } else {
+      chatRoom = {
+        currentChatRoom: chatId,
+        messageList: []
+      };
+
+      chatRooms.push(chatRoom);
+    }
+    
+    this.setState(
+      {
+        currentChatRoom: chatId,
+        messageList: messageList,
+        chatRooms: chatRooms
+      },
+      () => {
+        this.bottomRef.scrollTop = 9999999999999;
+      }
+    );
+  };
+
   loadUserData = () => {
     const loggedUser = localStorageService.getItem("auth_user");
     if (loggedUser) {
@@ -140,8 +213,6 @@ class AppChat extends Component {
   };
 
   connectToChat = () => {
-    this.disconnectToChat();
-
     ws = new WebSocket(URL_SERVER_CHAT);
     ws.onopen = (evt) => { this.onChatOpen(evt); };
     ws.onclose = (evt) => { this.onChatClose(evt); };
@@ -160,15 +231,14 @@ class AppChat extends Component {
     console.log('Connection opened!');
     if (ws && ws.readyState == 1) {
         console.log("ws: ", ws);
-        NotificationManager.success("Bienvenido al chat", "Bienvenido", 2000);
+        // NotificationManager.success("Bienvenido al chat", "Bienvenido", 2000);
     }
   }
 
   onChatClose = (evt) => {
-    // Clean
     console.log('Connection closed!');
     ws = null;
-    NotificationManager.error("Has sido desconectado del chat", "Error", 2000);
+    // NotificationManager.error("Has sido desconectado del chat", "Error", 2000);
     setTimeout(() => {
       if (this.state.loggedUser.role === ROLE_CONSULTANT) {
         history.push({
@@ -176,7 +246,7 @@ class AppChat extends Component {
         });
       } else {
         history.push({
-          pathname: "/client/home",
+          pathname: "/user/home",
         });
       }
     }, 2000);
@@ -191,15 +261,15 @@ class AppChat extends Component {
 
       switch (messageType) {
         case "id":
-            this.setSocketClientId(message);
+            this.setSocketUserId(message);
             break;
 
         case "chatMessage":
-            this.showOtherMessage(objMessage);
+            this.showChatMessage(message);
             break;
 
-        case "clients":
-            this.showClientsList(objMessage.message);
+        case "users":
+            this.receiveUsersInfo(message);
             break;
       }
   }
@@ -208,12 +278,13 @@ class AppChat extends Component {
 
   }
 
-  setSocketClientId = (message) => {
-    console.log("1 function setClientId: ", message);
+  setSocketUserId = (message) => {
+    console.log("function setSocketUserId: ", message);
     this.setState({
       loggedUser: {
         ...this.state.loggedUser,
-        socketId: message.socketId
+        socketId: message.socketId,
+        avatar: AVATARS[Math.floor(Math.random() * (10 - 0 + 1) + 0)],
       }
     });
 
@@ -221,7 +292,7 @@ class AppChat extends Component {
   }
 
   sendUserInfo = () => {
-    console.log("2 function sendUserInfo: ");
+    console.log("function sendUserInfo: ");
     if (!ws) {
         console.error("No WebSocket connection :(");
         return;
@@ -232,52 +303,133 @@ class AppChat extends Component {
     }));
   }
 
-  showOtherMessage = (objMessage) => {
-    console.log("function showOtherMessage");
+  showChatMessage = (objMessage) => {
+    console.log("function showChatMessage");
     console.log(objMessage);
-    const message = objMessage.message;
-    const name = objMessage.name;
-    const date = this.getDate();
-    
-    
+
+    const { transmitter, receiver } = objMessage;
+
+    console.log("this.state.loggedUser.socketId: ", this.state.loggedUser.socketId);
+    console.log("transmitter: ", transmitter);
+    console.log("receiver: ", receiver);
+
+    const myId = this.state.loggedUser.socketId;
+    const opponent = transmitter;
+    const { avatar:opAvatar, id: opId, name: opName, status: opStatus, userId: opUserId } = opponent;
+    const message = opponent.message;
+
+    let currentUserId
+    let opponentUserId
+    let chatId;
+    if (myId == transmitter.id) {
+      console.log("Im transmitter");
+      currentUserId = this.state.loggedUser.userId;
+      opponentUserId = receiver.userId;
+      chatId = currentUserId + "_" + opponentUserId;
+
+    } else if (myId == receiver.id) {
+      console.log("Im receiver");
+      currentUserId = this.state.loggedUser.userId;
+      opponentUserId = opponent.userId;
+      chatId = currentUserId + "_" + opponentUserId;
+    }
+    console.log("chatId: ", chatId);
+
+    const messageItem = {
+      avatar: opAvatar,
+      contactId: opId,
+      id: opId,
+      mood: "",
+      name: opName,
+      status: "online",
+      opUserId: opUserId,
+      text: message,
+      time: new Date()
+    };
+
+    let chatRooms = this.state.chatRooms;
+    let chatRoom;
+
+    let index = -1;
+    if (chatRooms) {
+      index = chatRooms.findIndex(chatRoom => chatRoom.currentChatRoom === chatId);
+    } else {
+      chatRooms = [];
+    }
+
+    let messageList = [];
+    if (index >= 0) {
+      messageList = chatRooms[index].messageList;
+      chatRooms[index].messageList.push(messageItem);
+
+    } else {
+      messageList.push(messageItem);
+
+      chatRoom = {
+        currentChatRoom: chatId,
+        messageList: messageList
+      };
+
+      chatRooms.push(chatRoom);
+    }
+
+    if (this.state.currentChatRoom == chatId) {
+      this.setState(
+        {            
+          currentChatRoom: this.state.currentChatRoom,
+          messageList: messageList,
+          chatRooms: chatRooms
+        },
+        () => {
+          this.bottomRef.scrollTop = 9999999999999;
+        }
+      );
+    } else {
+      this.setState(
+        {
+          //currentChatRoom: chatId,
+          currentChatRoom: this.state.currentChatRoom,
+          // messageList: messageList,
+          chatRooms: chatRooms
+        },
+      );
+    }
 }
 
-  showClientsList = (objClients) => {
-    console.log("function showClientsList");
-    let clientsList = objClients.clients;
-    let advice = objClients.advice;
-    console.log(clientsList);
+  receiveUsersInfo = (message) => {
+    console.log("function receiveUsersInfo: ", message);
+    console.log(message);
+    let usersList = this.state.usersList;
 
-    /*$("#divClientsList").empty();
-    if (clientsList != null && clientsList.length > 0) {
-        clientsList.forEach(client => {
-            let id = client.id;
-            let name = client.name;
-            
-            let isMe = id === userId;
+    if (usersList) {
+      for (let i = 0; i < usersList.length; ++i) {
+        let exists = false;
+        for (let j = 0; j < message.users; ++j) {
+          if (message.users[j].id === usersList[i].id) {
+            exists = true;
+            break;
+          }
+        }
+  
+        if (!exists && this.state.opponentUser && this.state.opponentUser.userId && this.state.opponentUser.userId === usersList[i].userId) {
+          console.log("Se desconectó: ", usersList[i]);
+          this.setState(
+            {
+              currentChatRoom: null,
+              messageList: [],
+              opponentUser: null
+              //chatRooms: chatRooms
+            },
+          );
+        }
+      }
+    }
 
-            if (!isMe) {
-                let username = name;
-                if (!name) {
-                    username = "New User";
-                }
-    
-                const clientItemContainer = `<div id="user-${id}" class="chat_list active_chat">
-                    <div class="chat_people">
-                            <div class="chat_img"> <img src="./img/user-profile.png" alt="sunil"> </div>
-                            <div class="chat_ib">
-                                <h5>${username} <span style="display:none;" class="chat_date">Dec 25</span></h5>
-                                <p style="display:none;">Test, which is a new approach to have all solutions
-                                    astrology under one roof.</p>
-                            </div>
-                        </div>
-                    </div>`;
-
-                $("#divClientsList").append(clientItemContainer);
-            }
-        });
-    }*/
+    this.setState({
+      usersList: message.users
+    });
   }
+  
 
   getDate = () => {
     const today = new Date();
@@ -326,6 +478,30 @@ class AppChat extends Component {
     });
   };
 
+  handleMessageSend2 = message => {
+    let { userId, socketId } = this.state.loggedUser;
+    let { currentChatRoom, opponentUser } = this.state;
+
+    if (currentChatRoom === "") return;
+    if (!ws) {
+        console.log("No WebSocket connection :(");
+        return;
+    }
+
+    ws.send(JSON.stringify({
+      idMessage: WS_USER_MESSAGE,
+      transmitter: {
+        id: socketId,
+        userId: this.state.loggedUser.userId,
+        avatar: this.state.loggedUser.avatar,
+        name: this.state.loggedUser.email,
+        status: "online",
+        message: message, 
+      },
+      receiver: opponentUser
+    }));
+  };
+
   setBottomRef = ref => {
     this.bottomRef = ref;
   };
@@ -341,7 +517,8 @@ class AppChat extends Component {
       recentContactList,
       messageList,
       opponentUser,
-      currentChatRoom
+      currentChatRoom,
+      usersList
     } = this.state;
     return (
       <Card className="chat-sidebar-container sidebar-container">
@@ -352,6 +529,8 @@ class AppChat extends Component {
           contactList={contactList}
           recentContactList={recentContactList}
           handleContactClick={this.handleContactClick}
+          handleContactClick2={this.handleContactClick2}
+          usersList={usersList}
         ></ChatSidenav>
         <ChatContainer
           open={open}
@@ -363,6 +542,7 @@ class AppChat extends Component {
           currentChatRoom={currentChatRoom}
           setBottomRef={this.setBottomRef}
           handleMessageSend={this.handleMessageSend}
+          handleMessageSend2={this.handleMessageSend2}
         ></ChatContainer>
         <NotificationContainer />
       </Card>

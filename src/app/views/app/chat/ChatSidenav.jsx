@@ -10,7 +10,9 @@ const ChatSidenav = ({
   contactList = [],
   recentContactList = [],
   handleContactClick,
-  toggleSidenav
+  handleContactClick2,
+  toggleSidenav,
+  usersList = []
 }) => {
   const [query, setQuery] = useState("");
 
@@ -69,6 +71,49 @@ const ChatSidenav = ({
             ))}
 
           <div className="mt-3 pb-2 pl-3 pr-3 font-weight-bold text-muted border-bottom">
+            Consultores en línea
+          </div>
+          {usersList
+            .filter(user => 
+              user.role === "consultant")
+            .map(user => (
+              <div
+                key={user.id}
+                onClick={() => handleContactClick2(user.id)}
+                className="p-3 d-flex border-bottom align-items-center contact online"
+                userid={user.userId}
+              >
+                <img
+                  src={"/assets/images/faces/1.jpg"}
+                  className="avatar-sm rounded-circle mr-3"
+                  alt=""
+                />
+                <h6 className="">{user.email}</h6>
+              </div>
+            ))}
+          <div className="mt-3 pb-2 pl-3 pr-3 font-weight-bold text-muted border-bottom">
+            Clientes en línea
+          </div>
+          {usersList
+            .filter(user => 
+            user.role === "client")
+            .map(user => (
+              <div
+                key={user.id}
+                onClick={() => handleContactClick2(user.id)}
+                className="p-3 d-flex border-bottom align-items-center contact online"
+                userid={user.userId}
+              >
+                <img
+                  src={"/assets/images/faces/1.jpg"}
+                  className="avatar-sm rounded-circle mr-3"
+                  alt=""
+                />
+                <h6 className="">{user.email}</h6>
+              </div>
+          ))}
+
+          <div className="mt-3 pb-2 pl-3 pr-3 font-weight-bold text-muted border-bottom">
             Contacts
           </div>
           {contactList
@@ -89,6 +134,7 @@ const ChatSidenav = ({
                 <h6 className="">{user.name}</h6>
               </div>
             ))}
+            
         </Scrollbar>
       </div>
     </div>
