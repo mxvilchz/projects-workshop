@@ -22,23 +22,16 @@ class Profile extends Component {
     // password: "",
     // repassword: "",
     website: "",
-    // switch: false,
-    // checkbox1: "",
-    // checkbox2: "",
-    // radio: "",
-    // range: {
-    //   startDate: new Date(),
-    //   endDate: (() => {
-    //     let date = new Date();
-    //     date.setDate(date.getDate() + 7);
-    //     return date;
-    //   })()
-    // }
   };
+
+  handleChange(event, name) {
+    this.setState({ [name]: event.target.value });
+  }
 
   componentDidMount = () => {
     const user = this.props.user
     const users = this.getUsers()
+
     users
       .then(data => {
         const userSearch = data.filter(item => item.uid === user.userId)
@@ -47,7 +40,6 @@ class Profile extends Component {
         })
       })
       .catch(error => console.log(error))
-
   }
 
   getUsers = async () => {
@@ -61,14 +53,19 @@ class Profile extends Component {
   }
 
   handleSubmit = async (values, { setSubmitting }) => {
-    FirebaseAuthService.firestore.collection('users').doc(values.id).update({
+    const dataUpd = {
       email: values.email,
       firstName: values.firstName,
       lastName: values.lastName,
       phone: values.phone,
       birthDay: values.birthDay,
-      website: values.website
-    })
+      website: values.website,
+    }
+
+    this.state.role !== 'client' && (dataUpd.category = values.category)
+
+    FirebaseAuthService.firestore.collection('users').doc(values.id).update(dataUpd)
+
     alert('Datos guardados!')
   };
 
@@ -195,6 +192,35 @@ class Profile extends Component {
                               {errors.phone}
                             </div>
                           )}
+                        </div>
+
+                        <div className="col-md-6 form-group mb-3">
+                          {user.role !== 'client' ?
+                            (<div className="form-group">
+                              <label htmlFor="category">Especialidad</label>
+                              <select
+                                className="form-control"
+                                name="category"
+                                onChange={(e) => { handleChange(e); this.handleChange(e, "category") }}
+                                onBlur={handleBlur}
+                              >
+                                <option hidden value={values.category}>{values.category}</option>
+                                <option value="Medicina">Medicina</option>
+                                <option value="Leyes">Leyes</option>
+                                <option value="Agricultura">Agricultura</option>
+                                <option value="Seguridad informática">Seguridad informática</option>
+                              </select>
+
+                              {errors.category && touched.category && (
+                                <div className="text-danger mt-1 ml-2">
+                                  {errors.category}
+                                </div>
+                              )}
+                            </div>) : null
+                          }
+                        </div>
+
+                        <div className="col-md-6">
                         </div>
 
                         {/* <div className="col-md-6 form-group mb-3">
