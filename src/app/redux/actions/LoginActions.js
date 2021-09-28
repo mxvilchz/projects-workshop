@@ -58,26 +58,29 @@ export function firebaseLoginEmailPassword({ email, password }) {
         if (user) {
           const id = user.user.uid
           FirebaseAuthService.getUserData(id, data => {
+            const inComingUser = {
+              userId: user.user.uid,
+              role: data.role,
+              displayName: user.user.displayName,
+              email: user.user.email,
+              photoURL: user.user.photoURL,
+              phoneNumber: user.user.phoneNumber,
+              token: user.user.refreshToken,
+              category: data.role === 'client' ? '' : data.category
+            }
             dispatch(
-              setUserData({
-                userId: user.user.uid,
-                role: data.role,
-                displayName: user.user.displayName,
-                email: user.user.email,
-                photoURL: user.user.photoURL,
-                phoneNumber: user.user.phoneNumber,
-                token: user.user.refreshToken,
-                category: data.role === 'client' ? '' : data.category
-              })
+              setUserData(inComingUser)
             );
 
             if (data.role === 'client') {
               history.push({
                 pathname: "/client/home",
-              });
+                state: inComingUser
+              })
             } else {
               history.push({
-                pathname: "/consultant/home"
+                pathname: "/consultant/home",
+                state: inComingUser
               });
             }
 

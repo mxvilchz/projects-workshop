@@ -43,13 +43,18 @@ class AppChat extends Component {
 
   constructor(props) {
     super(props);
+    console.log("<--------PROPIEDADES PROPS------------>")
+    console.log(props)
   }
 
   state = {
-    currentUser: {
-      id: "7863a6802ez0e277a0f98534"
-    },
+    user:{},
+    specialties: [],
+    usersList: [],
+    consultores: [],
+    currentUser: {},
     contactList: [],
+    chatRooms: [],
     recentContactList: [],
     messageList: [],
     currentChatRoom: "",
@@ -62,6 +67,9 @@ class AppChat extends Component {
   windowResizeListener;
 
   componentDidMount() {
+    this.setState({user: this.props.location.state.user});    
+    this.setState({specialties: this.props.location.state.specialties});
+
     this.loadUserData();
     this.connectToChat();
 
@@ -76,7 +84,7 @@ class AppChat extends Component {
     getAllContact(this.state.currentUser.id).then(data =>
       this.setState({ contactList: [...data.data] })
     );
-    this.updateRecentContactList();
+   // this.updateRecentContactList();
 
     if (isMobile())
       this.setState({
@@ -152,7 +160,9 @@ class AppChat extends Component {
     console.log("contactId: ", contactId);
 
     const opponentUser = this.state.usersList.find(user => user.id === contactId);
-    
+
+    if(this.state.user.role === opponentUser.role) return;
+
     this.setState({
       opponentUser: { 
         avatar: opponentUser.avatar,
@@ -231,7 +241,7 @@ class AppChat extends Component {
     console.log('Connection opened!');
     if (ws && ws.readyState == 1) {
         console.log("ws: ", ws);
-        // NotificationManager.success("Bienvenido al chat", "Bienvenido", 2000);
+         NotificationManager.success("Bienvenido al chat", "Bienvenido", 2000);
     }
   }
 
@@ -397,11 +407,19 @@ class AppChat extends Component {
 }
 
   receiveUsersInfo = (message) => {
-    console.log("function receiveUsersInfo: ", message);
+    console.log("<------SE RECIBE EL MENSAJEEEEE DEL WEBSOCKET----->: ", message);
     console.log(message);
     let usersList = this.state.usersList;
 
-    if (usersList) {
+   /*  if(usersList){
+
+    }    
+
+    usersList.some(us => message.users.includes(us.id)) */
+    
+
+    /* if (usersList) {
+      
       for (let i = 0; i < usersList.length; ++i) {
         let exists = false;
         for (let j = 0; j < message.users; ++j) {
@@ -422,12 +440,27 @@ class AppChat extends Component {
             },
           );
         }
-      }
-    }
+      }    
+    
+    } */
 
     this.setState({
       usersList: message.users
     });
+
+    if(this.state.specialties && this.state.usersList){
+    const especialidades = this.state.specialties.flatMap(s=>s.title);
+    const consultores = this.state.usersList
+    .filter(usuario => usuario.role === 'consultant')
+    .filter(consultor => especialidades.includes(consultor.category));
+    
+    this.setState({
+      consultores: consultores
+    })
+  }else{
+    console.log(this.state.specialties, this.state.usersList);
+  }
+
   }
   
 
@@ -512,6 +545,8 @@ class AppChat extends Component {
     let {
       open,
       isMobile,
+      user,
+      specialities,
       currentUser,
       contactList,
       recentContactList,
@@ -526,6 +561,9 @@ class AppChat extends Component {
           open={open}
           isMobile={isMobile}
           toggleSidenav={this.toggleSidenav}
+          user={user}
+          consultores={this.state.consultores}
+          currentUser={currentUser}
           contactList={contactList}
           recentContactList={recentContactList}
           handleContactClick={this.handleContactClick}

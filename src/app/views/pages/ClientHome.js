@@ -11,7 +11,19 @@ import SimpleCard from "@gull/components/cards/SimpleCard";
 import { Link } from "react-router-dom";
 
 class ClientHome extends Component {
+
+  constructor(props){
+    super(props);
+    console.log(props);
+  }
+
+  componentDidMount(){
+    //this.state.user = this.props.state;
+    this.setState({user: this.props.location.state})
+  }
+
   state = {
+    user: {},
     cardList1: [
       {
         icon: "i-Speach-Bubble-6",
@@ -160,7 +172,7 @@ class ClientHome extends Component {
     switch (index) {
       case 0:
         //especialidades
-        this.props.history.push('/specialties')
+        this.props.history.push({pathname: '/specialties', state:  this.state.user})
         break;
       case 1:
         this.props.history.push('/checkout')

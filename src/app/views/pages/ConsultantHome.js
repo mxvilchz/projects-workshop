@@ -11,7 +11,12 @@ import { Breadcrumb } from "@gull";
 // import { Link } from "react-router-dom";
 
 class ConsultantHome extends Component {
+
+  
+
+
   state = {
+    user: {},
     cardList1: [
       {
         icon: "i-Speach-Bubble-6",
@@ -142,6 +147,12 @@ class ConsultantHome extends Component {
     ]
   };
 
+  componentDidMount(){
+   // this.state.user = this.props.location.state;
+   this.setState({user: this.props.location.state})
+  }
+
+
   getUserStatusClass = status => {
     switch (status) {
       case "active":
@@ -160,7 +171,7 @@ class ConsultantHome extends Component {
     switch (index) {
       case 0:
         //chat
-        this.props.history.push('/chat')
+        this.props.history.push({pathname: '/chat', state: {user: this.state}})
         break;
       default:
         break;

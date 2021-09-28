@@ -14,51 +14,59 @@ const Checkbox = ({ value, onChange }) => {
 }
 
 class Specialties extends Component {
+  constructor(props){
+    super(props);
+    console.log(props)
+  }
+
   state = {
+    user: {},
     disabled: true,
     cardList1: [],
     cardList2: [
       {
         icon: "i-Doctor",
         subtitle: "Consultoría de salud",
-        title: "Doctores",
+        title: "Doctor",
         checked: false
       },
       {
         icon: "i-Engineering",
         subtitle: "new users",
-        title: "Ingenieros",
+        title: "Ingeniero",
         checked: false
       },
       {
         icon: "i-Financial",
         subtitle: "Para tus finanzas",
-        title: "Contadores",
+        title: "Contador",
         checked: false
       },
       {
         icon: "i-Business-ManWoman",
         subtitle: "Vende tu marca",
-        title: "Publicistas",
+        title: "Publicista",
         checked: false
       },
       {
         icon: "i-Love-User",
         subtitle: "Para friendzoneados",
-        title: "Chamanes norteños",
+        title: "Chamán",
         checked: false
       },
       {
         icon: "i-Youtube",
         subtitle: "Llega a un público específico",
-        title: "Youtubers",
+        title: "Youtuber",
         checked: false
       }
     ],
     bigImageCard: []
   };
 
-
+  componentDidMount(){
+    this.setState({user: this.props.location.state})
+  }
 
   handleChangeOne = (index) => {
     this.state.cardList2[index].checked = !this.state.cardList2[index].checked;
@@ -73,7 +81,7 @@ class Specialties extends Component {
   handleSubmit = () => {
     const specialties = this.state.cardList2.filter((item) => item.checked);
     localStorage.setItem('specialties', JSON.stringify(specialties));
-    this.props.history.push({ pathname: "/chat", state: { specialties: specialties } })
+    this.props.history.push({ pathname: "/chat", state: { specialties: specialties, user: this.state.user } })
   }
 
 

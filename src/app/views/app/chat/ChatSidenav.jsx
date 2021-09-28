@@ -7,6 +7,8 @@ import { format } from "date-fns";
 const ChatSidenav = ({
   open,
   currentUser,
+  user,
+  consultores = [],
   contactList = [],
   recentContactList = [],
   handleContactClick,
@@ -16,6 +18,8 @@ const ChatSidenav = ({
 }) => {
   const [query, setQuery] = useState("");
 
+
+ 
   return (
     <div
       className="chat-sidebar-wrap sidebar"
@@ -39,7 +43,7 @@ const ChatSidenav = ({
         </div>
 
         <Scrollbar className="contacts-scrollable">
-          <div className="mt-4 pb-2 pl-3 pr-3 font-weight-bold text-muted border-bottom">
+          {/*  <div className="mt-4 pb-2 pl-3 pr-3 font-weight-bold text-muted border-bottom">
             Recent
           </div>
 
@@ -68,14 +72,28 @@ const ChatSidenav = ({
                   </span>
                 </div>
               </div>
-            ))}
+            ))} */}
 
-          <div className="mt-3 pb-2 pl-3 pr-3 font-weight-bold text-muted border-bottom">
-            Consultores en línea
-          </div>
-          {usersList
-            .filter(user => 
-              user.role === "consultant")
+          {user.role === "client" ?
+            (<div className="mt-3 pb-2 pl-3 pr-3 font-weight-bold text-muted border-bottom">
+              Consultores en línea
+            </div>) : null
+          }
+
+
+  {/* 
+  const especialidades =  specialties.flatMap(s=>s.title);
+  console.log("<----------ESPECIALIDADES---------->");
+  console.log(especialidades);
+  console.log("<----------CONSULTORES---------->");
+  console.log(usersList.filter(usuario => usuario.role === 'consultant'));
+
+  const consultores = usersList.filter(usuario => usuario.role === 'consultant').filter(consultor => especialidades.includes(consultor.category));
+  
+  console.log("<----------RESULTADO FINAL---------->");
+  console.log(consultores); */}
+
+          {user.role === "client" ? (consultores
             .map(user => (
               <div
                 key={user.id}
@@ -90,11 +108,39 @@ const ChatSidenav = ({
                 />
                 <h6 className="">{user.email}</h6>
               </div>
-            ))}
-          <div className="mt-3 pb-2 pl-3 pr-3 font-weight-bold text-muted border-bottom">
+            ))
+          ) : null
+          }
+
+           <div className="mt-3 pb-2 pl-3 pr-3 font-weight-bold text-muted border-bottom">
             Clientes en línea
-          </div>
+          </div> 
+            {/* {user.role === "consultant"?(<div className="mt-3 pb-2 pl-3 pr-3 font-weight-bold text-muted border-bottom">
+            Clientes en línea
+          </div>): null} */}
+
+
           {usersList
+            .filter(user =>
+              user.role === "client")
+            .map(user => (
+              <div
+                key={user.id}
+                onClick={() => handleContactClick2(user.id)}
+                className="p-3 d-flex border-bottom align-items-center contact online"
+                userid={user.userId}
+              >
+                <img
+                  src={"/assets/images/faces/1.jpg"}
+                  className="avatar-sm rounded-circle mr-3"
+                  alt=""
+                />
+                <h6 className="">{user.email}</h6>
+              </div>
+            ))
+          }
+
+          {/*  {user.role === "consultant"? (usersList
             .filter(user => 
             user.role === "client")
             .map(user => (
@@ -111,9 +157,10 @@ const ChatSidenav = ({
                 />
                 <h6 className="">{user.email}</h6>
               </div>
-          ))}
+          ))): null
+        } */}
 
-          <div className="mt-3 pb-2 pl-3 pr-3 font-weight-bold text-muted border-bottom">
+          {/*  <div className="mt-3 pb-2 pl-3 pr-3 font-weight-bold text-muted border-bottom">
             Contacts
           </div>
           {contactList
@@ -133,8 +180,8 @@ const ChatSidenav = ({
                 />
                 <h6 className="">{user.name}</h6>
               </div>
-            ))}
-            
+            ))} */}
+
         </Scrollbar>
       </div>
     </div>

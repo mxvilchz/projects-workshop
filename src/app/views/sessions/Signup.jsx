@@ -174,10 +174,13 @@ class Signup extends Component {
                               onBlur={handleBlur}
                             >
                               <option value="">Seleccionar especialidad</option>
-                              <option value="Medicina">Medicina</option>
-                              <option value="Leyes">Leyes</option>
-                              <option value="Agricultura">Agricultura</option>
-                              <option value="Seguridad informática">Seguridad informática</option>
+                              <option value="Doctor">Doctor</option>
+                              <option value="Ingeniero">Ingeniero</option>
+                              <option value="Contador">Contador</option>
+                              <option value="Publicista">Publicista</option>
+                              <option value="Chamán">Chamán</option>
+                              <option value="Youtuber">Youtuber</option>                              
+                                   
                             </select>
                             {errors.category && touched.category && (
                               <div className="text-danger mt-1 ml-2">

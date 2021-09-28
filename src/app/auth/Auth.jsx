@@ -14,7 +14,7 @@ class Auth extends Component {
     super(props);
 
     this.props.setUserData(localStorageService.getItem("auth_user"));
-    // this.checkJwtAuth();
+    this.checkJwtAuth();
     this.checkFirebaseAuth();
   }
 
@@ -31,6 +31,8 @@ class Auth extends Component {
         // console.log(user.email);
         // console.log(user.emailVerified);
         firebaseAuthService.getUserData(user.uid, data => {
+
+          if(data !== null){
           const payload = {
             userId: user.uid,
             role: data.role,
@@ -42,7 +44,9 @@ class Auth extends Component {
             category: data.role === 'client' ? '' : data.category
           }
           this.props.loginWithEmailAndPassword(payload)
-        })
+        }
+      }
+        )
       } else {
         console.log("not logged in");
       }
